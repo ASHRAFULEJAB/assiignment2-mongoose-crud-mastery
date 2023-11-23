@@ -1,26 +1,28 @@
 // creatring user interface here
 
-export type Fullname = {
+import { Model } from "mongoose";
+
+export type TFullname = {
   firstName: string;
   lastName: string;
 };
 
-export type fullAddress = {
+export type TfullAddress = {
   street: string;
   city: string;
   country: string;
 };
 
-export type User = {
+export type TUser = {
   userId: number;
   username: string;
   password: string;
-  fullName: Fullname;
+  fullName: TFullname;
   age: number;
   email: string;
   isActive: boolean;
   hobbies: string[];
-  address: fullAddress;
+  address: TfullAddress;
   isDeleted: boolean;
 
   //   orders: [
@@ -31,3 +33,8 @@ export type User = {
   //     }
   //   ];
 };
+//static methods here
+
+export interface UserModel extends Model<TUser> {
+  isUserExist(userId: string): Promise<TUser | null>;
+}

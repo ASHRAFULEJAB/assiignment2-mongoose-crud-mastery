@@ -1,11 +1,11 @@
 // creating user model here
 import bcrypt from "bcrypt";
 import { Schema, model } from "mongoose";
-import { Fullname, User, fullAddress } from "./user.interface";
+import { TFullname, TUser, TfullAddress, UserModel } from "./user.interface";
 import config from "../../config";
 import { query } from "express";
 
-const fullNameSchema = new Schema<Fullname>({
+const fullNameSchema = new Schema<TFullname>({
   firstName: {
     type: String,
     required: [true, "First name is required"],
@@ -18,13 +18,13 @@ const fullNameSchema = new Schema<Fullname>({
   },
 });
 
-const fullAddrssSchema = new Schema<fullAddress>({
+const fullAddrssSchema = new Schema<TfullAddress>({
   street: { type: String, required: [true, "Street is required"] },
   city: { type: String, required: [true, "City is required"] },
   country: { type: String },
 });
 
-const userSchema = new Schema<User>({
+const userSchema = new Schema<TUser, UserModel>({
   userId: { type: Number, unique: true },
   username: { type: String, unique: true },
   password: {
@@ -90,4 +90,11 @@ userSchema.post("save", async function (doc, next) {
   next();
 });
 
-export const UserModel = model<User>("User", userSchema);
+// custom static method is here
+
+userSchema.statics.isUserExist = async function (userId: string) {
+  const userExist = await User.findOne({ userId });
+  return userExist;
+};
+
+export const User = model<TUser,UserModel>("User", userSchema);

@@ -37,23 +37,32 @@ const userSchema = new Schema<User>({
   age: { type: Number, required: [true, "Age is required"] },
   email: { type: String, required: [true, "Email is required"] },
   isActive: {
-    type: String,
-    enum: {
-      values: ["Active", "Nonactive"],
-      message: "{VALUE} is not a valid status",
-      default: "Active",
-    },
+    type: Boolean,
+    default: false,
   },
-  hobbies: {
-    type: String,
-    enum: {
-      values: ["Gardening", "Reading", "Gaming", "Movies", "Travelling"],
-      message: "{VALUE} is not a valid hobbies",
+  hobbies: [
+    {
+      type: String,
     },
-  },
+  ],
   address: {
     type: fullAddrssSchema,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+// finding specific fileds
+
+userSchema.pre("find", function () {
+  this.find({}).select(" username fullName age email address isDeleted -_id ");
+});
+
+// finding single data
+userSchema.pre("findOne", function () {
+  this.findOne({}).select("  -_id  -__v");
 });
 
 // generating has paaword
@@ -64,8 +73,15 @@ userSchema.pre("save", async function (next) {
     user.password,
     Number(config.bcrypt_salt_rounds)
   );
+  //   user.exclude("password");
   next();
 });
+// deleting password feild into the response
+userSchema.methods.toJSON = function () {
+  var passdelete = this.toObject();
+  delete passdelete.password;
+  return passdelete;
+};
 
 // after hasing removing the password feild
 userSchema.post("save", async function (doc, next) {

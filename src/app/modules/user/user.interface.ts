@@ -18,9 +18,10 @@ export type User = {
   fullName: Fullname;
   age: number;
   email: string;
-  isActive: "Active" | "Nonactive";
-  hobbies: "Gardening" | "Reading" | "Gaming" | "Movies" | "Travelling";
+  isActive: boolean;
+  hobbies: string[];
   address: fullAddress;
+  isDeleted: boolean;
 
   //   orders: [
   //     {

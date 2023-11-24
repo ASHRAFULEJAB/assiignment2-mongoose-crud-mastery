@@ -15,31 +15,39 @@ const getAllUserFromDB = async () => {
 
 // get user by indiviual id
 
-const getSingleUserFromDB = async (userId: string) => {
+const getSingleUserFromDB = async (userId: number) => {
   // checking user is exists or not
   if (await User.isUserExist(userId)) {
-    throw new Error("User Already Exist!");
+    const result = await User.findOne({ userId });
+    //   console.log(result);
+    return result;
+  } else {
+    throw new Error("User Doesnot Exist!");
   }
-
-  const result = await User.findOne({ userId });
-  //   console.log(result);
-  return result;
 };
 
 // update user
-const updateSingleUserFromDB = async (userId: string) => {
+const updateSingleUserFromDB = async (
+  userId: number,
+  userData: TUser
+): Promise<TUser | null | undefined> => {
   // checking user is exists or not
-  //   if (await User.isUserExist(userId)) {
-  //     throw new Error("User Already Exist!");
-  //   }
+  if (await User.isUserExist(userId)) {
+    const updateResult = await User.updateOne({ userId }, userData, {
+      runValidators: true,
+    });
+    if (updateResult.modifiedCount === 1) {
+      const result = User.findOne({ userId });
 
-  const result = await User.findByIdAndUpdate( userId );
-  //   console.log(result);
-  return result;
+      return result;
+    } else if (updateResult.modifiedCount === 0) {
+      throw new Error("User doesnot Exist!");
+    }
+  }
 };
 
 // deleting user
-const deleteUserFromDB = async (userId: string) => {
+const deleteUserFromDB = async (userId: number) => {
   const result = await User.updateOne({ userId }, { isDeleted: true });
   //   console.log(result);
   return result;

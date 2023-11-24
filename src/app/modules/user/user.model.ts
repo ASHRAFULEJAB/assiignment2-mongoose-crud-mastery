@@ -92,7 +92,7 @@ userSchema.post("save", async function (doc, next) {
 
 // custom static method is here
 
-userSchema.statics.isUserExist = async function (userId: string) {
+userSchema.statics.isUserExist = async function (userId: number) {
   const userExist = await User.findOne({ userId });
   return userExist;
 };

@@ -35,7 +35,7 @@ const productSchema = new Schema<TSingleProduct>({
   quantity: { type: String, required: [true, "Quantity is required"] },
 });
 
-const userSchema = new Schema<TUser,TSingleProduct, UserModel>({
+const userSchema = new Schema<TUser, TSingleProduct, UserModel>({
   userId: { type: Number, unique: true },
   username: { type: String, unique: true },
   password: {
@@ -76,6 +76,10 @@ userSchema.pre("find", function () {
 userSchema.pre("findOne", function () {
   this.findOne({}).select("  -_id  -__v");
 });
+// // finding only orders data
+// userSchema.pre("findOne", function () {
+//   this.findOne({}).select("orders  -_id  -__v");
+// });
 
 // generating has paaword
 

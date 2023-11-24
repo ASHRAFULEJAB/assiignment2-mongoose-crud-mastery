@@ -69,6 +69,18 @@ const createOrders = async (userId: number, order: TSingleProduct) => {
   // return updatedOrders;
   // return result;
 };
+// get order by indiviual id
+
+const gettingOrdersFromDB = async (userId: number) => {
+  // checking user is exists or not
+  if (await User.isUserExist(userId)) {
+    const result = await User.findOne({ userId });
+    //   console.log(result);
+    return result;
+  } else {
+    throw new Error("User Doesnot Exist!");
+  }
+};
 
 export const UserService = {
   createUserIntoDB,
@@ -77,4 +89,5 @@ export const UserService = {
   deleteUserFromDB,
   updateSingleUserFromDB,
   createOrders,
+  gettingOrdersFromDB,
 };

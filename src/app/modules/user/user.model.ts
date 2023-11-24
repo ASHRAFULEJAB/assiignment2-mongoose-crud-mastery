@@ -1,9 +1,14 @@
 // creating user model here
 import bcrypt from "bcrypt";
 import { Schema, model } from "mongoose";
-import { TFullname, TUser, TfullAddress, UserModel } from "./user.interface";
+import {
+  TSingleProduct,
+  TFullname,
+  TUser,
+  TfullAddress,
+  UserModel,
+} from "./user.interface";
 import config from "../../config";
-import { query } from "express";
 
 const fullNameSchema = new Schema<TFullname>({
   firstName: {
@@ -24,7 +29,13 @@ const fullAddrssSchema = new Schema<TfullAddress>({
   country: { type: String },
 });
 
-const userSchema = new Schema<TUser, UserModel>({
+const productSchema = new Schema<TSingleProduct>({
+  productName: { type: String, required: [true, "Product Name is required"] },
+  price: { type: String, required: [true, "Price is required"] },
+  quantity: { type: String, required: [true, "Quantity is required"] },
+});
+
+const userSchema = new Schema<TUser,TSingleProduct, UserModel>({
   userId: { type: Number, unique: true },
   username: { type: String, unique: true },
   password: {
@@ -48,6 +59,7 @@ const userSchema = new Schema<TUser, UserModel>({
   address: {
     type: fullAddrssSchema,
   },
+  orders: { type: [productSchema] },
   isDeleted: {
     type: Boolean,
     default: false,
@@ -57,7 +69,7 @@ const userSchema = new Schema<TUser, UserModel>({
 // finding specific fileds
 
 userSchema.pre("find", function () {
-  this.find({}).select(" username fullName age email address isDeleted -_id ");
+  this.find({}).select(" username fullName age email address  -_id ");
 });
 
 // finding single data
@@ -68,6 +80,7 @@ userSchema.pre("findOne", function () {
 // generating has paaword
 
 userSchema.pre("save", async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this;
   user.password = await bcrypt.hash(
     user.password,
@@ -78,7 +91,7 @@ userSchema.pre("save", async function (next) {
 });
 // deleting password feild into the response
 userSchema.methods.toJSON = function () {
-  var passdelete = this.toObject();
+  const passdelete = this.toObject();
   delete passdelete.password;
   return passdelete;
 };
@@ -97,4 +110,4 @@ userSchema.statics.isUserExist = async function (userId: number) {
   return userExist;
 };
 
-export const User = model<TUser,UserModel>("User", userSchema);
+export const User = model<TUser, UserModel>("User", userSchema);

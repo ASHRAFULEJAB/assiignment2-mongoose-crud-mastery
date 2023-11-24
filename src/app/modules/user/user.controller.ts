@@ -13,6 +13,7 @@ const createUser = async (req: Request, res: Response) => {
       message: "User created successfully!",
       data: result,
     });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     res.status(500).json({
       success: false,
@@ -37,6 +38,7 @@ const gettingAllUser = async (req: Request, res: Response) => {
       message: "Users fetched successfully!",
       data: result,
     });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     res.status(500).json({
       success: false,
@@ -62,6 +64,7 @@ const gettingSingleUser = async (req: Request, res: Response) => {
       message: "Users fetched successfully!",
       data: result,
     });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     res.status(500).json({
       success: false,
@@ -89,6 +92,7 @@ const updateSingleUser = async (req: Request, res: Response) => {
       message: "Users updated successfully!",
       data: result,
     });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     res.status(500).json({
       success: false,
@@ -114,6 +118,34 @@ const deleteUser = async (req: Request, res: Response) => {
       message: "Users deleted successfully!",
       data: result,
     });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: "User not found",
+      error: {
+        code: 404,
+        description: "User not found!",
+        message: error.message,
+      },
+    });
+  }
+};
+const createOrder = async (req: Request, res: Response) => {
+  try {
+    // console.log(req.body);
+    const userId = parseInt(req.params.userId);
+    const orderData = req.body;
+    // console.log(userId, orderData);
+    const result = await UserService.createOrders(userId, orderData);
+    console.log(result);
+
+    res.status(200).json({
+      success: true,
+      message: "Order created successfully!",
+      data: null,
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     res.status(500).json({
       success: false,
@@ -133,4 +165,5 @@ export const UserControllers = {
   gettingSingleUser,
   deleteUser,
   updateSingleUser,
+  createOrder,
 };

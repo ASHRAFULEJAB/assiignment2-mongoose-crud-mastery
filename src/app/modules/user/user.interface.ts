@@ -13,6 +13,16 @@ export type TfullAddress = {
   country: string;
 };
 
+
+export type TSingleProduct = {
+  productName: string;
+  price: string;
+  quantity: string;
+  
+};
+
+
+
 export type TUser = {
   userId: number;
   username: string;
@@ -24,14 +34,8 @@ export type TUser = {
   hobbies: string[];
   address: TfullAddress;
   isDeleted: boolean;
-
-  //   orders: [
-  //     {
-  //       productName: string;
-  //       price: string;
-  //       quantity: string;
-  //     }
-  //   ];
+  orders?: TSingleProduct[];
+  //
 };
 //static methods here
 

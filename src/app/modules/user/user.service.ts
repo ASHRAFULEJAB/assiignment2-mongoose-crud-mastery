@@ -1,4 +1,4 @@
-import { TUser } from "./user.interface";
+import { TSingleProduct, TUser } from "./user.interface";
 import { User } from "./user.model";
 
 const createUserIntoDB = async (user: TUser) => {
@@ -38,7 +38,6 @@ const updateSingleUserFromDB = async (
     });
     if (updateResult.modifiedCount === 1) {
       const result = User.findOne({ userId });
-
       return result;
     } else if (updateResult.modifiedCount === 0) {
       throw new Error("User doesnot Exist!");
@@ -53,10 +52,29 @@ const deleteUserFromDB = async (userId: number) => {
   return result;
 };
 
+// crreating order
+const createOrders = async (userId: number, order: TSingleProduct) => {
+  const updatedUser = await User.findOneAndUpdate(
+    { userId },
+    { $push: { orders: order } },
+    { upsert: true } // Return the updated document
+  ).exec();;
+
+  // if (!updatedUser) {
+  //   throw new Error("User not found");
+  // }
+  // console.log(updatedUser);
+
+  return updatedUser;
+  // return updatedOrders;
+  // return result;
+};
+
 export const UserService = {
   createUserIntoDB,
   getAllUserFromDB,
   getSingleUserFromDB,
   deleteUserFromDB,
   updateSingleUserFromDB,
+  createOrders,
 };

@@ -11,10 +11,12 @@ app.use(cors());
 // application routes
 app.use("/api", UserRoutes);
 
-const getAController = (req: Request, res: Response) => {
-  const a = 10;
-  res.send(a);
+const getRootResponse = (req: Request, res: Response) => {
+  res.status(200).json({
+    success: true,
+    message: "Crud Mastery is running successfully",
+  });
 };
 
-app.get("/", getAController);
+app.get("/", getRootResponse);
 export default app;

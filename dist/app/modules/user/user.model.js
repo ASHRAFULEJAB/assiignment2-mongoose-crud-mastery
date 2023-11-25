@@ -112,4 +112,9 @@ userSchema.statics.isUserExist = function (userId) {
         return userExist;
     });
 };
+// calculating average price
+userSchema.statics.UserModel = function () {
+    return __awaiter(this, void 0, void 0, function* () {
+    });
+};
 exports.User = (0, mongoose_1.model)("User", userSchema);

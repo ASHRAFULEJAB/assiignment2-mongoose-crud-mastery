@@ -136,6 +136,7 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         });
     }
 });
+// create order
 const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // console.log(req.body);
@@ -189,6 +190,38 @@ const gettingOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         });
     }
 });
+// calculate total price
+const calculateTotalPrice = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userId = parseInt(req.params.userId);
+        const result = yield user_service_1.UserService.calculatingOrderTotalPrice(userId);
+        // console.log(result);
+        if (typeof result === "number") {
+            res.status(200).json({
+                success: true,
+                message: "Total price calculated successfully!",
+                data: {
+                    totalPrice: result.toFixed(2),
+                },
+            });
+        }
+        else {
+            throw new Error("No order for Total price");
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }
+    catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "User not found",
+            error: {
+                code: 404,
+                description: "User not found!",
+                message: error.message,
+            },
+        });
+    }
+});
 exports.UserControllers = {
     createUser,
     gettingAllUser,
@@ -197,4 +230,5 @@ exports.UserControllers = {
     updateSingleUser,
     createOrder,
     gettingOrders,
+    calculateTotalPrice,
 };

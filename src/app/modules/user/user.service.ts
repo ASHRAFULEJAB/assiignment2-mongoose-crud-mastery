@@ -58,7 +58,7 @@ const createOrders = async (userId: number, order: TSingleProduct) => {
     { userId },
     { $push: { orders: order } },
     { upsert: true } // Return the updated document
-  ).exec();;
+  ).exec();
 
   // if (!updatedUser) {
   //   throw new Error("User not found");
@@ -82,6 +82,27 @@ const gettingOrdersFromDB = async (userId: number) => {
   }
 };
 
+// calculating total price
+const calculatingOrderTotalPrice = async (
+  userId: number
+): Promise<number | []> => {
+  const user = await User.findOne({ userId });
+  if (user && user.orders && user.orders.length > 0) {
+    const totalPrice = user.orders.reduce(
+      (val: number, order: TSingleProduct) => {
+        const price = parseFloat(order.price);
+        const quantity = parseFloat(order.quantity);
+        const totalPrice = price * quantity;
+        const finalTotalPrice = val + totalPrice;
+        return finalTotalPrice;
+      },
+      0
+    );
+    return totalPrice;
+  }
+  return [];
+};
+
 export const UserService = {
   createUserIntoDB,
   getAllUserFromDB,
@@ -90,4 +111,5 @@ export const UserService = {
   updateSingleUserFromDB,
   createOrders,
   gettingOrdersFromDB,
+  calculatingOrderTotalPrice,
 };

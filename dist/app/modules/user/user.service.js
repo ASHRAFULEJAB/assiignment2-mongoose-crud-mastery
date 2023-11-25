@@ -60,7 +60,6 @@ const deleteUserFromDB = (userId) => __awaiter(void 0, void 0, void 0, function*
 const createOrders = (userId, order) => __awaiter(void 0, void 0, void 0, function* () {
     const updatedUser = yield user_model_1.User.findOneAndUpdate({ userId }, { $push: { orders: order } }, { upsert: true } // Return the updated document
     ).exec();
-    ;
     // if (!updatedUser) {
     //   throw new Error("User not found");
     // }
@@ -81,6 +80,21 @@ const gettingOrdersFromDB = (userId) => __awaiter(void 0, void 0, void 0, functi
         throw new Error("User Doesnot Exist!");
     }
 });
+// calculating total price
+const calculatingOrderTotalPrice = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield user_model_1.User.findOne({ userId });
+    if (user && user.orders && user.orders.length > 0) {
+        const totalPrice = user.orders.reduce((val, order) => {
+            const price = parseFloat(order.price);
+            const quantity = parseFloat(order.quantity);
+            const totalPrice = price * quantity;
+            const finalTotalPrice = val + totalPrice;
+            return finalTotalPrice;
+        }, 0);
+        return totalPrice;
+    }
+    return [];
+});
 exports.UserService = {
     createUserIntoDB,
     getAllUserFromDB,
@@ -89,4 +103,5 @@ exports.UserService = {
     updateSingleUserFromDB,
     createOrders,
     gettingOrdersFromDB,
+    calculatingOrderTotalPrice,
 };

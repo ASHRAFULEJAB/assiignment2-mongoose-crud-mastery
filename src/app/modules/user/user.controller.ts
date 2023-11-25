@@ -131,6 +131,8 @@ const deleteUser = async (req: Request, res: Response) => {
     });
   }
 };
+
+// create order
 const createOrder = async (req: Request, res: Response) => {
   try {
     // console.log(req.body);
@@ -185,6 +187,40 @@ const gettingOrders = async (req: Request, res: Response) => {
   }
 };
 
+// calculate total price
+
+const calculateTotalPrice = async (req: Request, res: Response) => {
+  try {
+    const userId = parseInt(req.params.userId);
+    const result = await UserService.calculatingOrderTotalPrice(userId);
+    // console.log(result);
+
+    if (typeof result === "number") {
+      res.status(200).json({
+        success: true,
+        message: "Total price calculated successfully!",
+        data: {
+          totalPrice: result.toFixed(2),
+        },
+      });
+    } else {
+      throw new Error("No order for Total price");
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: "User not found",
+      error: {
+        code: 404,
+        description: "User not found!",
+        message: error.message,
+      },
+    });
+  }
+};
+
 export const UserControllers = {
   createUser,
   gettingAllUser,
@@ -193,4 +229,5 @@ export const UserControllers = {
   updateSingleUser,
   createOrder,
   gettingOrders,
+  calculateTotalPrice,
 };

@@ -114,4 +114,10 @@ userSchema.statics.isUserExist = async function (userId: number) {
   return userExist;
 };
 
+// calculating average price
+
+userSchema.statics.UserModel = async function(){
+  
+}
+
 export const User = model<TUser, UserModel>("User", userSchema);

@@ -40,7 +40,7 @@ const userSchema = new Schema<TUser, TSingleProduct, UserModel>({
   username: { type: String, unique: true },
   password: {
     type: String,
-    required: [true, "Password is required"],
+
     maxlength: [10, "password should be at least 10 characters!"],
     select: false,
   },
@@ -76,10 +76,6 @@ userSchema.pre("find", function () {
 userSchema.pre("findOne", function () {
   this.findOne({}).select("  -_id  -__v");
 });
-// // finding only orders data
-// userSchema.pre("findOne", function () {
-//   this.findOne({}).select("orders  -_id  -__v");
-// });
 
 // generating has paaword
 
@@ -90,7 +86,7 @@ userSchema.pre("save", async function (next) {
     user.password,
     Number(config.bcrypt_salt_rounds)
   );
-  //   user.exclude("password");
+
   next();
 });
 // deleting password feild into the response
@@ -102,7 +98,6 @@ userSchema.methods.toJSON = function () {
 
 // after hasing removing the password feild
 userSchema.post("save", async function (doc, next) {
-  //   doc.password.select("-password")
   doc.password = "";
   next();
 });
@@ -116,8 +111,6 @@ userSchema.statics.isUserExist = async function (userId: number) {
 
 // calculating average price
 
-userSchema.statics.UserModel = async function(){
-  
-}
+userSchema.statics.UserModel = async function () {};
 
 export const User = model<TUser, UserModel>("User", userSchema);

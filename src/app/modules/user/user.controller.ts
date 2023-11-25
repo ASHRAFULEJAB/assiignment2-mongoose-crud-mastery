@@ -1,12 +1,15 @@
 import { Request, Response } from "express";
 import { UserService } from "./user.service";
+import userValidationSchema from "./user.validation";
 
 const createUser = async (req: Request, res: Response) => {
   try {
-    // console.log(req.body);
     const UserData = req.body;
-    // console.log(UserData);
-    const result = await UserService.createUserIntoDB(UserData);
+
+    // creating zod validation
+    const zodParseData = userValidationSchema.parse(UserData);
+
+    const result = await UserService.createUserIntoDB(zodParseData);
 
     res.status(200).json({
       success: true,
@@ -57,7 +60,6 @@ const gettingSingleUser = async (req: Request, res: Response) => {
   try {
     const userId = parseInt(req.params.userId);
     const result = await UserService.getSingleUserFromDB(userId);
-    // console.log(result);
 
     res.status(200).json({
       success: true,
@@ -83,9 +85,12 @@ const updateSingleUser = async (req: Request, res: Response) => {
   try {
     const userId = parseInt(req.params.userId);
     const userData = req.body;
-    // console.log(userId, userData);
-    const result = await UserService.updateSingleUserFromDB(userId, userData);
-    // console.log(result);
+
+    const zodParseData = userValidationSchema.parse(userData);
+    const result = await UserService.updateSingleUserFromDB(
+      userId,
+      zodParseData
+    );
 
     res.status(200).json({
       success: true,
@@ -111,12 +116,12 @@ const deleteUser = async (req: Request, res: Response) => {
   try {
     const userId = parseInt(req.params.userId);
     const result = await UserService.deleteUserFromDB(userId);
-    // console.log(result);
+    console.log(result);
 
     res.status(200).json({
       success: true,
       message: "Users deleted successfully!",
-      data: result,
+      data: null,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -135,10 +140,9 @@ const deleteUser = async (req: Request, res: Response) => {
 // create order
 const createOrder = async (req: Request, res: Response) => {
   try {
-    // console.log(req.body);
     const userId = parseInt(req.params.userId);
     const orderData = req.body;
-    // console.log(userId, orderData);
+
     const result = await UserService.createOrders(userId, orderData);
     console.log(result);
 
@@ -166,7 +170,7 @@ const gettingOrders = async (req: Request, res: Response) => {
   try {
     const userId = parseInt(req.params.userId);
     const result = await UserService.gettingOrdersFromDB(userId);
-    // console.log(result);
+
     const updatedResult = { orders: result?.orders };
     res.status(200).json({
       success: true,
@@ -193,7 +197,6 @@ const calculateTotalPrice = async (req: Request, res: Response) => {
   try {
     const userId = parseInt(req.params.userId);
     const result = await UserService.calculatingOrderTotalPrice(userId);
-    // console.log(result);
 
     if (typeof result === "number") {
       res.status(200).json({

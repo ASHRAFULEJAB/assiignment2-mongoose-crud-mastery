@@ -8,15 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserControllers = void 0;
 const user_service_1 = require("./user.service");
+const user_validation_1 = __importDefault(require("./user.validation"));
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // console.log(req.body);
         const UserData = req.body;
-        // console.log(UserData);
-        const result = yield user_service_1.UserService.createUserIntoDB(UserData);
+        // creating zod validation
+        const zodParseData = user_validation_1.default.parse(UserData);
+        const result = yield user_service_1.UserService.createUserIntoDB(zodParseData);
         res.status(200).json({
             success: true,
             message: "User created successfully!",
@@ -64,7 +68,6 @@ const gettingSingleUser = (req, res) => __awaiter(void 0, void 0, void 0, functi
     try {
         const userId = parseInt(req.params.userId);
         const result = yield user_service_1.UserService.getSingleUserFromDB(userId);
-        // console.log(result);
         res.status(200).json({
             success: true,
             message: "Users fetched successfully!",
@@ -89,9 +92,8 @@ const updateSingleUser = (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         const userId = parseInt(req.params.userId);
         const userData = req.body;
-        // console.log(userId, userData);
-        const result = yield user_service_1.UserService.updateSingleUserFromDB(userId, userData);
-        // console.log(result);
+        const zodParseData = user_validation_1.default.parse(userData);
+        const result = yield user_service_1.UserService.updateSingleUserFromDB(userId, zodParseData);
         res.status(200).json({
             success: true,
             message: "Users updated successfully!",
@@ -116,11 +118,11 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const userId = parseInt(req.params.userId);
         const result = yield user_service_1.UserService.deleteUserFromDB(userId);
-        // console.log(result);
+        console.log(result);
         res.status(200).json({
             success: true,
             message: "Users deleted successfully!",
-            data: result,
+            data: null,
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }
@@ -139,10 +141,8 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 // create order
 const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // console.log(req.body);
         const userId = parseInt(req.params.userId);
         const orderData = req.body;
-        // console.log(userId, orderData);
         const result = yield user_service_1.UserService.createOrders(userId, orderData);
         console.log(result);
         res.status(200).json({
@@ -169,7 +169,6 @@ const gettingOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     try {
         const userId = parseInt(req.params.userId);
         const result = yield user_service_1.UserService.gettingOrdersFromDB(userId);
-        // console.log(result);
         const updatedResult = { orders: result === null || result === void 0 ? void 0 : result.orders };
         res.status(200).json({
             success: true,
@@ -195,7 +194,6 @@ const calculateTotalPrice = (req, res) => __awaiter(void 0, void 0, void 0, func
     try {
         const userId = parseInt(req.params.userId);
         const result = yield user_service_1.UserService.calculatingOrderTotalPrice(userId);
-        // console.log(result);
         if (typeof result === "number") {
             res.status(200).json({
                 success: true,

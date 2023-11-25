@@ -3,13 +3,13 @@ import { User } from "./user.model";
 
 const createUserIntoDB = async (user: TUser) => {
   const result = await User.create(user);
-  //   console.log(result)
+
   return result;
 };
 // getting all user
 const getAllUserFromDB = async () => {
   const result = await User.find();
-  //   console.log(result)
+
   return result;
 };
 
@@ -19,7 +19,7 @@ const getSingleUserFromDB = async (userId: number) => {
   // checking user is exists or not
   if (await User.isUserExist(userId)) {
     const result = await User.findOne({ userId });
-    //   console.log(result);
+
     return result;
   } else {
     throw new Error("User Doesnot Exist!");
@@ -47,27 +47,28 @@ const updateSingleUserFromDB = async (
 
 // deleting user
 const deleteUserFromDB = async (userId: number) => {
-  const result = await User.updateOne({ userId }, { isDeleted: true });
-  //   console.log(result);
-  return result;
+  if (await User.isUserExist(userId)) {
+    const result = await User.updateOne({ userId }, { isDeleted: true });
+
+    return result;
+  } else {
+    throw new Error("User doesnot Exist!");
+  }
 };
 
 // crreating order
 const createOrders = async (userId: number, order: TSingleProduct) => {
-  const updatedUser = await User.findOneAndUpdate(
-    { userId },
-    { $push: { orders: order } },
-    { upsert: true } // Return the updated document
-  ).exec();
+  if (await User.isUserExist(userId)) {
+    const updatedUser = await User.findOneAndUpdate(
+      { userId },
+      { $push: { orders: order } },
+      { upsert: true }
+    ).exec();
 
-  // if (!updatedUser) {
-  //   throw new Error("User not found");
-  // }
-  // console.log(updatedUser);
-
-  return updatedUser;
-  // return updatedOrders;
-  // return result;
+    return updatedUser;
+  } else {
+    throw new Error("User doesnot Exist!");
+  }
 };
 // get order by indiviual id
 
@@ -75,7 +76,7 @@ const gettingOrdersFromDB = async (userId: number) => {
   // checking user is exists or not
   if (await User.isUserExist(userId)) {
     const result = await User.findOne({ userId });
-    //   console.log(result);
+
     return result;
   } else {
     throw new Error("User Doesnot Exist!");
@@ -87,18 +88,20 @@ const calculatingOrderTotalPrice = async (
   userId: number
 ): Promise<number | []> => {
   const user = await User.findOne({ userId });
-  if (user && user.orders && user.orders.length > 0) {
-    const totalPrice = user.orders.reduce(
-      (val: number, order: TSingleProduct) => {
-        const price = parseFloat(order.price);
-        const quantity = parseFloat(order.quantity);
-        const totalPrice = price * quantity;
-        const finalTotalPrice = val + totalPrice;
-        return finalTotalPrice;
-      },
-      0
-    );
-    return totalPrice;
+  if (await User.isUserExist(userId)) {
+    if (user && user.orders && user.orders.length > 0) {
+      const totalPrice = user.orders.reduce(
+        (val: number, order: TSingleProduct) => {
+          const price = parseFloat(order.price);
+          const quantity = parseFloat(order.quantity);
+          const totalPrice = price * quantity;
+          const finalTotalPrice = val + totalPrice;
+          return finalTotalPrice;
+        },
+        0
+      );
+      return totalPrice;
+    }
   }
   return [];
 };

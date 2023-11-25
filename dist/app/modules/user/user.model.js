@@ -44,7 +44,6 @@ const userSchema = new mongoose_1.Schema({
     username: { type: String, unique: true },
     password: {
         type: String,
-        required: [true, "Password is required"],
         maxlength: [10, "password should be at least 10 characters!"],
         select: false,
     },
@@ -77,17 +76,12 @@ userSchema.pre("find", function () {
 userSchema.pre("findOne", function () {
     this.findOne({}).select("  -_id  -__v");
 });
-// // finding only orders data
-// userSchema.pre("findOne", function () {
-//   this.findOne({}).select("orders  -_id  -__v");
-// });
 // generating has paaword
 userSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const user = this;
         user.password = yield bcrypt_1.default.hash(user.password, Number(config_1.default.bcrypt_salt_rounds));
-        //   user.exclude("password");
         next();
     });
 });
@@ -100,7 +94,6 @@ userSchema.methods.toJSON = function () {
 // after hasing removing the password feild
 userSchema.post("save", function (doc, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        //   doc.password.select("-password")
         doc.password = "";
         next();
     });
@@ -114,7 +107,6 @@ userSchema.statics.isUserExist = function (userId) {
 };
 // calculating average price
 userSchema.statics.UserModel = function () {
-    return __awaiter(this, void 0, void 0, function* () {
-    });
+    return __awaiter(this, void 0, void 0, function* () { });
 };
 exports.User = (0, mongoose_1.model)("User", userSchema);

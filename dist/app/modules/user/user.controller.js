@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserControllers = void 0;
 const user_service_1 = require("./user.service");
 const user_validation_1 = __importDefault(require("./user.validation"));
+const update_user_validation_1 = require("./update.user.validation");
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const UserData = req.body;
@@ -70,7 +71,7 @@ const gettingSingleUser = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const result = yield user_service_1.UserService.getSingleUserFromDB(userId);
         res.status(200).json({
             success: true,
-            message: "Users fetched successfully!",
+            message: "User fetched successfully!",
             data: result,
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -92,11 +93,11 @@ const updateSingleUser = (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         const userId = parseInt(req.params.userId);
         const userData = req.body;
-        const zodParseData = user_validation_1.default.parse(userData);
-        const result = yield user_service_1.UserService.updateSingleUserFromDB(userId, zodParseData);
+        const updateZodParseData = update_user_validation_1.updateUserValidationSchema.parse(userData);
+        const result = yield user_service_1.UserService.updateSingleUserFromDB(userId, updateZodParseData);
         res.status(200).json({
             success: true,
-            message: "Users updated successfully!",
+            message: "User updated successfully!",
             data: result,
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -121,7 +122,7 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         console.log(result);
         res.status(200).json({
             success: true,
-            message: "Users deleted successfully!",
+            message: "User deleted successfully!",
             data: null,
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -199,7 +200,7 @@ const calculateTotalPrice = (req, res) => __awaiter(void 0, void 0, void 0, func
                 success: true,
                 message: "Total price calculated successfully!",
                 data: {
-                    totalPrice: result.toFixed(2),
+                    totalPrice: Number(result.toFixed(2)),
                 },
             });
         }

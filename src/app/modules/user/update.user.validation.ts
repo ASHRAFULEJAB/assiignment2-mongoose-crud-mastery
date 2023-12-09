@@ -18,18 +18,16 @@ const singleProductValidationSchema = z.object({
   quantity: z.number(),
 });
 // user validation schema for model
-export const userValidationSchema = z.object({
-  userId: z.number(),
-  username: z.string(),
-  password: z.string(),
-  fullName: fullnameValidationSchema,
-  age: z.number(),
-  email: z.string().email(),
-  isActive: z.boolean(),
-  hobbies: z.array(z.string()),
-  address: fullAddressValidationSchema,
+export const updateUserValidationSchema = z.object({
+  userId: z.number().optional(),
+  username: z.string().optional(),
+  password: z.string().min(10).optional(),
+  fullName: fullnameValidationSchema.optional(),
+  age: z.number().optional(),
+  email: z.string().email().optional(),
+  isActive: z.boolean().optional(),
+  hobbies: z.array(z.string()).optional(),
+  address: fullAddressValidationSchema.optional(),
   orders: z.array(singleProductValidationSchema).optional(),
   isDeleted: z.boolean().optional(),
 });
-
-export default userValidationSchema;

@@ -84,12 +84,16 @@ const calculatingOrderTotalPrice = (userId) => __awaiter(void 0, void 0, void 0,
     if (yield user_model_1.User.isUserExist(userId)) {
         if (user && user.orders && user.orders.length > 0) {
             const totalPrice = user.orders.reduce((val, order) => {
-                const price = parseFloat(order.price);
-                const quantity = parseFloat(order.quantity);
+                const price = order.price;
+                const quantity = order.quantity;
                 const totalPrice = price * quantity;
                 const finalTotalPrice = val + totalPrice;
                 return finalTotalPrice;
             }, 0);
+            return totalPrice;
+        }
+        else if (user && user.orders && user.orders.length <= 0) {
+            const totalPrice = 0;
             return totalPrice;
         }
     }

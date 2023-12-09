@@ -31,8 +31,8 @@ const fullAddrssSchema = new Schema<TfullAddress>({
 
 const productSchema = new Schema<TSingleProduct>({
   productName: { type: String, required: [true, "Product Name is required"] },
-  price: { type: String, required: [true, "Price is required"] },
-  quantity: { type: String, required: [true, "Quantity is required"] },
+  price: { type: Number, required: [true, "Price is required"] },
+  quantity: { type: Number, required: [true, "Quantity is required"] },
 });
 
 const userSchema = new Schema<TUser, TSingleProduct, UserModel>({
@@ -41,7 +41,7 @@ const userSchema = new Schema<TUser, TSingleProduct, UserModel>({
   password: {
     type: String,
 
-    maxlength: [10, "password should be at least 10 characters!"],
+    // maxlength: [10, "password should be at least 10 characters!"],
     select: false,
   },
   fullName: { type: fullNameSchema, required: [true, "Full Name is required"] },
@@ -66,6 +66,14 @@ const userSchema = new Schema<TUser, TSingleProduct, UserModel>({
   },
 });
 
+// userSchema.methods.toJSON = function () {
+//   const userObject = this.toObject();
+
+//   // Remove isDeleted field and orders
+
+//   return userObject;
+// };
+
 // finding specific fileds
 
 userSchema.pre("find", function () {
@@ -83,7 +91,7 @@ userSchema.pre("save", async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this;
   user.password = await bcrypt.hash(
-    user.password,
+    user?.password,
     Number(config.bcrypt_salt_rounds)
   );
 
@@ -93,6 +101,8 @@ userSchema.pre("save", async function (next) {
 userSchema.methods.toJSON = function () {
   const passdelete = this.toObject();
   delete passdelete.password;
+  delete passdelete.isDeleted;
+  delete passdelete.orders;
   return passdelete;
 };
 

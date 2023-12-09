@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { UserService } from "./user.service";
 import userValidationSchema from "./user.validation";
+import { updateUserValidationSchema } from "./update.user.validation";
 
 const createUser = async (req: Request, res: Response) => {
   try {
@@ -63,7 +64,7 @@ const gettingSingleUser = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: "Users fetched successfully!",
+      message: "User fetched successfully!",
       data: result,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -86,15 +87,15 @@ const updateSingleUser = async (req: Request, res: Response) => {
     const userId = parseInt(req.params.userId);
     const userData = req.body;
 
-    const zodParseData = userValidationSchema.parse(userData);
+    const updateZodParseData = updateUserValidationSchema.parse(userData);
     const result = await UserService.updateSingleUserFromDB(
       userId,
-      zodParseData
+      updateZodParseData
     );
 
     res.status(200).json({
       success: true,
-      message: "Users updated successfully!",
+      message: "User updated successfully!",
       data: result,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -120,7 +121,7 @@ const deleteUser = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: "Users deleted successfully!",
+      message: "User deleted successfully!",
       data: null,
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -203,7 +204,7 @@ const calculateTotalPrice = async (req: Request, res: Response) => {
         success: true,
         message: "Total price calculated successfully!",
         data: {
-          totalPrice: result.toFixed(2),
+          totalPrice: Number(result.toFixed(2)),
         },
       });
     } else {

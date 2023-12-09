@@ -1,4 +1,4 @@
-import { TSingleProduct, TUser } from "./user.interface";
+import { TSingleProduct, TUpdateUser, TUser } from "./user.interface";
 import { User } from "./user.model";
 
 const createUserIntoDB = async (user: TUser) => {
@@ -29,8 +29,8 @@ const getSingleUserFromDB = async (userId: number) => {
 // update user
 const updateSingleUserFromDB = async (
   userId: number,
-  userData: TUser
-): Promise<TUser | null | undefined> => {
+  userData: TUpdateUser
+): Promise<TUpdateUser | null | undefined> => {
   // checking user is exists or not
   if (await User.isUserExist(userId)) {
     const updateResult = await User.updateOne({ userId }, userData, {
@@ -92,14 +92,17 @@ const calculatingOrderTotalPrice = async (
     if (user && user.orders && user.orders.length > 0) {
       const totalPrice = user.orders.reduce(
         (val: number, order: TSingleProduct) => {
-          const price = parseFloat(order.price);
-          const quantity = parseFloat(order.quantity);
+          const price = order.price;
+          const quantity = order.quantity;
           const totalPrice = price * quantity;
           const finalTotalPrice = val + totalPrice;
           return finalTotalPrice;
         },
         0
       );
+      return totalPrice;
+    } else if (user && user.orders && user.orders.length <= 0) {
+      const totalPrice = 0;
       return totalPrice;
     }
   }

@@ -36,15 +36,15 @@ const fullAddrssSchema = new mongoose_1.Schema({
 });
 const productSchema = new mongoose_1.Schema({
     productName: { type: String, required: [true, "Product Name is required"] },
-    price: { type: String, required: [true, "Price is required"] },
-    quantity: { type: String, required: [true, "Quantity is required"] },
+    price: { type: Number, required: [true, "Price is required"] },
+    quantity: { type: Number, required: [true, "Quantity is required"] },
 });
 const userSchema = new mongoose_1.Schema({
     userId: { type: Number, unique: true },
     username: { type: String, unique: true },
     password: {
         type: String,
-        maxlength: [10, "password should be at least 10 characters!"],
+        // maxlength: [10, "password should be at least 10 characters!"],
         select: false,
     },
     fullName: { type: fullNameSchema, required: [true, "Full Name is required"] },
@@ -68,6 +68,11 @@ const userSchema = new mongoose_1.Schema({
         default: false,
     },
 });
+// userSchema.methods.toJSON = function () {
+//   const userObject = this.toObject();
+//   // Remove isDeleted field and orders
+//   return userObject;
+// };
 // finding specific fileds
 userSchema.pre("find", function () {
     this.find({}).select(" username fullName age email address  -_id ");
@@ -81,7 +86,7 @@ userSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const user = this;
-        user.password = yield bcrypt_1.default.hash(user.password, Number(config_1.default.bcrypt_salt_rounds));
+        user.password = yield bcrypt_1.default.hash(user === null || user === void 0 ? void 0 : user.password, Number(config_1.default.bcrypt_salt_rounds));
         next();
     });
 });
@@ -89,6 +94,8 @@ userSchema.pre("save", function (next) {
 userSchema.methods.toJSON = function () {
     const passdelete = this.toObject();
     delete passdelete.password;
+    delete passdelete.isDeleted;
+    delete passdelete.orders;
     return passdelete;
 };
 // after hasing removing the password feild
